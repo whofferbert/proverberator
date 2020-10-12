@@ -57,9 +57,9 @@ int roomSizeLedPin = 5;
 int dampingLedPin = 4;
 int blendLedPin = 3;
 
-int rgbledBluePin = 2;
-int rgbledGreenPin = 1;
 int rgbledRedPin = 0;
+int rgbledGreenPin = 1;
+int rgbledBluePin = 2;
 
 struct pedalState
 {
@@ -78,7 +78,7 @@ void setup() {
     // set up audio things
     // Serial.begin(9600);
     AudioMemory(40);
-    delay(2400);
+    //delay(2400);
     sgtl5000_1.enable();
     sgtl5000_1.volume(.8);
     sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
@@ -197,15 +197,14 @@ void ledManager () {
 }
 
 void channelManager () {
-    // 
     if (brain.ledsOn == true) {
         // mixer blends in the stuff
-        float dry = (1.0 - brain.blend) * 2.0 ;
+        float dry = 1.0 - brain.blend;
         if (brain.channel == 0) {
             mixer1.gain(0, dry);
             mixer2.gain(0, dry);
-            mixer1.gain(1, brain.blend * 2.0);
-            mixer2.gain(1, brain.blend * 2.0); 
+            mixer1.gain(1, brain.blend);
+            mixer2.gain(1, brain.blend); 
             mixer1.gain(2, 0);
             mixer2.gain(2, 0);
             mixer1.gain(3, 0);
@@ -215,8 +214,8 @@ void channelManager () {
             mixer2.gain(0, dry);
             mixer1.gain(1, 0);
             mixer2.gain(1, 0);
-            mixer1.gain(2, brain.blend * 2.0);
-            mixer2.gain(2, brain.blend * 2.0);
+            mixer1.gain(2, brain.blend);
+            mixer2.gain(2, brain.blend);
             mixer1.gain(3, 0);
             mixer2.gain(3, 0);
         } else {
@@ -226,8 +225,8 @@ void channelManager () {
             mixer2.gain(2, 0);
             mixer1.gain(1, 0);
             mixer2.gain(1, 0);
-            mixer1.gain(3, brain.blend * 2.0);
-            mixer2.gain(3, brain.blend * 2.0);
+            mixer1.gain(3, brain.blend);
+            mixer2.gain(3, brain.blend);
         }
     } else {
         // mixer mute output
@@ -250,7 +249,8 @@ void loop () {
     // also, check the sense switch
     // if the sense switch is off:
     //   mute sounds (mixers)
-    //   leds off-ish
+    //   leds off-ish?
+    //   maybe keep the "eye" on
     // else
     //   leds allowed to be on as appropriate
     //   unmute sounds (mixers)
@@ -313,11 +313,12 @@ void loop () {
     }
 
 
-    if (brain.needsChannelUpdate == false) {
+    if (brain.needsChannelUpdate == true) {
         brain.needsChannelUpdate = false;
         channelManager();
         ledManager();
     }
+
 
     delay(10);
     
