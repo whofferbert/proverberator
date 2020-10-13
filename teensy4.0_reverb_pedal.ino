@@ -50,7 +50,7 @@ Bounce footSwitch = Bounce();
 int footSwitchPin = 26;
 
 
-// LEDs
+// LED Pin Associations
 int switchLedPin = 24;
 int timeLedPin = 9;
 int roomSizeLedPin = 5;
@@ -74,7 +74,6 @@ struct pedalState
 pedalState brain;
 
 void setup() {
-    // stuff and things
     // set up audio things
     // Serial.begin(9600);
     AudioMemory(40);
@@ -98,7 +97,6 @@ void setup() {
 }
 
 void initialReadSet () {
-    // stuff and things
     // gotta set up the initial values i think
 
     // checking the switch state and set the thing properly
@@ -111,7 +109,10 @@ void initialReadSet () {
         brain.ledsOn = false;
     }
 
+    / set switch state on boot
     selectSwitchStateManager();
+
+    // set leds to off just in case
     digitalWrite(timeLedPin, HIGH);
     digitalWrite(roomSizeLedPin, HIGH);
     digitalWrite(dampingLedPin, HIGH);
@@ -120,7 +121,6 @@ void initialReadSet () {
 }
 
 void runUpdates() {
-    //
     footSwitch.update();
     timePot.update();
     roomSizePot.update();
@@ -130,7 +130,6 @@ void runUpdates() {
 }
 
 void selectSwitchStateManager() {
-    //
     int val = selectSwitch.getValue();
     if (val < 30) {
         // switch is up
@@ -142,6 +141,8 @@ void selectSwitchStateManager() {
         // mid
         brain.channel = 1;
     }
+    // this line is especially some side-effecting garbage that makes
+    // sure the channels get set properly on boot the first time too
     brain.needsChannelUpdate = true;
 }
 
@@ -181,7 +182,6 @@ void ledOnChannelLogic (){
 }
 
 void ledManager () {
-    // stuff
     if (brain.ledsOn == true) {
         ledOnChannelLogic();
         digitalWrite(switchLedPin, LOW);
